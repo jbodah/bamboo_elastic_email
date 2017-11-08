@@ -65,7 +65,6 @@ defmodule Bamboo.ElasticEmailAdapter do
       |> add_msg_bcc(email)
       |> add_msg_cc(email)
       |> add_subject(email)
-      |> IO.inspect
 
     URI.encode_query(params)
   end
