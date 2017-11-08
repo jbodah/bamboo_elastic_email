@@ -22,8 +22,9 @@ defmodule Bamboo.ElasticEmailAdapter do
 
   def deliver(email, config) do
     url = build_req_url(email, config)
+    query_params = build_query_params(email, config)
     headers = build_req_headers(email, config)
-    case :hackney.get(url, headers, "") do
+    case :hackney.get(url, headers, query_params) do
       {:ok, status, _, response} when status > 299 ->
         raise "Received non-200 status code: #{inspect status}, #{inspect response}"
 
@@ -43,14 +44,14 @@ defmodule Bamboo.ElasticEmailAdapter do
     end
   end
 
-  defp build_req_url(email, config) do
-    base_url = Path.join(@host, @path)
-    query_params = build_query_params(email, config)
-    base_url <> "?" <> query_params
+  defp build_req_url(_email, _config) do
+    Path.join(@host, @path)
   end
 
   defp build_req_headers(_email, _config) do
-    []
+    [
+      {"Content-Type", "application/x-www-form-urlencoded"}
+    ]
   end
 
   defp build_query_params(email, config) do
